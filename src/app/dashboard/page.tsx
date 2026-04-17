@@ -25,6 +25,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex items-center justify-center min-h-full px-6 py-12">
+      <h2>Submit a URL</h2>
       <UrlInput onSubmit={handleSubmit} loading={loading} />
     </div>
   );

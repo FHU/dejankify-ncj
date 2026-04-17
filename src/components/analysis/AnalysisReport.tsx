@@ -76,6 +76,7 @@ export default function AnalysisReport({
               year: "numeric",
               hour: "numeric",
               minute: "2-digit",
+              timeZone: "UTC",
             })}
           </p>
         </div>

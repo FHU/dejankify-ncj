@@ -22,18 +22,22 @@ export async function analyzePageSpeed(url: string): Promise<PageSpeedResult> {
   const issues: Issue[] = [];
 
   const apiKey = process.env.PAGESPEED_API_KEY;
-  const params = new URLSearchParams({
-    url,
-    strategy: "mobile",
-    category: "PERFORMANCE",
-    category: "ACCESSIBILITY",
-    // Note: URLSearchParams only keeps last duplicate key.
-    // We need to build the URL manually for multiple categories.
-  });
+  const categories = ["PERFORMANCE", "ACCESSIBILITY", "BEST_PRACTICES", "SEO"]
+  // const params = new URLSearchParams({
+  //   url,
+  //   strategy: "mobile",
+  //   category: "PERFORMANCE",
+  //   // Note: URLSearchParams only keeps last duplicate key.
+  //   // We need to build the URL manually for multiple categories.
+  // });
 
   // Build URL with multiple category params
   let apiUrl = `${PAGESPEED_API_URL}?url=${encodeURIComponent(url)}&strategy=mobile`;
-  apiUrl += "&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO";
+  //apiUrl += "&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO";
+  categories.forEach(element => {
+    apiUrl+=`&category=${element}`
+  });
+
   if (apiKey) apiUrl += `&key=${apiKey}`;
 
   try {

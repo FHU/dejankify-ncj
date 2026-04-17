@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import type { Element } from "domhandler";
 import { resolveImageUrl, processImageForVision } from "@/lib/image-processing";
 import { analyzeImage } from "@/lib/claude";
 import type { AltTextResult, AltTextImage, Issue } from "@/types";
@@ -14,7 +15,7 @@ const GENERIC_ALT_PATTERNS = [
 
 function scoreAltText(
   alt: string | null | undefined,
-  $el: cheerio.Cheerio<cheerio.Element>,
+  $el: cheerio.Cheerio<Element>,
   $: cheerio.CheerioAPI
 ): number {
   if (alt === undefined || alt === null) return 0;

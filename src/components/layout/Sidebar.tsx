@@ -202,6 +202,7 @@ export default function Sidebar({ sessions, onDelete }: SidebarProps) {
                             <span
                               className="text-xs mt-0.5"
                               style={{ color: "var(--text-muted)" }}
+                              suppressHydrationWarning
                             >
                               {formatDate(s.updatedAt)}
                               {s.latestScore !== null && (

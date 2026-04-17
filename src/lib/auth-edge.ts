@@ -1,10 +1,9 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+// Edge-compatible auth config — no Prisma adapter (not available in edge runtime).
+// Used only by middleware for route protection. Full auth with DB adapter is in auth.ts.
+export const { auth } = NextAuth({
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -15,15 +14,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
-      return session;
-    },
     authorized({ auth: session, request: { nextUrl } }) {
-      console.log("auth.ts: checking auth")
-      
+      console.log("auth-edge.ts: checking auth")
+
       // disable auth in development
       //if (process.env.NODE_ENV === "development") return true;
 
@@ -34,7 +27,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (isOnDashboard) {
         if (isLoggedIn) return true;
-        return false; // redirect to login
+        return false;
       } else if (isLoggedIn) {
         return Response.redirect(new URL("/dashboard", nextUrl));
       }
