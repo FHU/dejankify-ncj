@@ -29,7 +29,7 @@ export default function Header({ user, onSignOut, onToggleSidebar }: HeaderProps
 
   return (
     <header
-      className="flex items-center justify-between px-4 sm:px-6 py-3 shrink-0"
+      className="flex items-center justify-between lg:justify-end px-4 sm:px-6 py-3 shrink-0"
       style={{
         background: "var(--bg-surface)",
         borderBottom: "1px solid var(--border)",

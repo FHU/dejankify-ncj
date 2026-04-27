@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev          # Start dev server
 npm run build        # Production build
+npm run start        # Start production server
 npm run lint         # Run ESLint
 
 npm run db:generate  # Regenerate Prisma client after schema changes
@@ -61,12 +62,12 @@ To add a new analyzer: create `src/analyzers/my-check.ts`, export `analyzeMyChec
 
 ### Claude usage
 
-`src/lib/claude.ts` wraps the Anthropic SDK with two helpers:
+`src/lib/claude.ts` wraps the Anthropic SDK with four helpers: `complete()`, `analyzeImage()`, `chatAboutReport()`, and `streamChatAboutReport()`.
 
 - **Text completion** — used by OG tag and heading analyzers
-- **Vision** — used by alt-text analyzer (encodes images via `src/lib/image-processing.ts`)
+- **Vision** — used by alt-text analyzer; images are resized to max 800px / JPEG 80% via `src/lib/image-processing.ts` before sending
 
-Two models are in use: **Claude Sonnet 4** for analysis/vision tasks, **Claude Haiku** for chat. Cost is estimated per-call and accumulated in `DailyUsage`.
+Models in use: `claude-sonnet-4-20250514` for analysis/vision, `claude-haiku-4-5-20251001` for chat. Cost is estimated per-call (Sonnet ~$3/$15 per MTok in/out, Haiku ~$0.80/$4) and accumulated in `DailyUsage`. Both analysis count and cumulative cost are tracked as separate daily limits.
 
 ### Database schema (Prisma)
 
@@ -81,7 +82,20 @@ After any schema change: `npm run db:generate && npm run db:push`.
 
 ### Auth
 
-Auth.js v5 (beta) with Google OAuth only. `src/middleware.ts` protects `/dashboard` and `/session` routes. The adapter uses Prisma for session persistence.
+Auth.js v5 (beta) with Google OAuth only. There are **two auth configs** to avoid bundling Prisma into the edge runtime:
+
+- `src/lib/auth.ts` — full config with Prisma adapter; used in server components and API routes
+- `src/lib/auth-edge.ts` — lightweight config without Prisma; used only in `src/middleware.ts`
+
+`src/middleware.ts` protects `/dashboard` and `/session` routes.
+
+### Prisma
+
+Prisma client is generated to `generated/prisma/` (not the default location). The client uses `@prisma/adapter-pg` (driver adapter pattern) with a direct `pg` connection — this is why `prisma.ts` instantiates a `Pool` and wraps it in `PrismaPg`. Import the singleton from `src/lib/prisma.ts`.
+
+### Chat streaming
+
+The `/api/chat` route returns a `ReadableStream` emitting SSE-formatted chunks (`data: ...\n\n`). The frontend `ChatPanel` reads this with the Fetch streaming API, not `EventSource`. Do not switch to `EventSource` — it does not support POST requests.
 
 ### Path aliases
 
