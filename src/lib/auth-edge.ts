@@ -15,8 +15,6 @@ export const { auth } = NextAuth({
   },
   callbacks: {
     authorized({ auth: session, request: { nextUrl } }) {
-      console.log("auth-edge.ts: checking auth")
-
       // disable auth in development
       //if (process.env.NODE_ENV === "development") return true;
 

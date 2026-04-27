@@ -26,8 +26,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
     authorized({ auth: session, request: { nextUrl } }) {
-      console.log("auth.ts: checking auth")
-      
       // disable auth in development
       //if (process.env.NODE_ENV === "development") return true;
 
