@@ -38,7 +38,7 @@ function ShellInner({
     if (!mobileSidebarOpen) return;
 
     const frame = requestAnimationFrame(() => {
-      setMobileSidebarOpen(false);
+      setSidebarOpenedAt(null);
     });
 
     return () => cancelAnimationFrame(frame);
