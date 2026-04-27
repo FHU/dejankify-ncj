@@ -55,6 +55,13 @@ export default function SessionView({
     setSessionData(sessionId, chatMessages);
   }, [sessionId, chatMessages, setSessionData]);
 
+  // Poll for completion while analysis is in progress
+  useEffect(() => {
+    if (!analysis || (analysis.status !== "running" && analysis.status !== "pending")) return;
+    const id = setInterval(() => router.refresh(), 2000);
+    return () => clearInterval(id);
+  }, [analysis?.status, router]);
+
   const handleRerun = async () => {
     setRerunning(true);
     try {
