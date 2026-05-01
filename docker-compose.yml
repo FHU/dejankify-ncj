@@ -16,5 +16,29 @@ services:
       timeout: 3s
       retries: 5
 
+  app:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm ci && npx prisma db push && npm run dev -- --hostname 0.0.0.0"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - app_node_modules:/app/node_modules
+      - app_next_cache:/app/.next
+    environment:
+      DATABASE_URL: postgresql://dejankify:dejankify_dev@db:5432/dejankify
+      AUTH_TRUST_HOST: "true"
+      AUTH_URL: http://localhost:3000
+      HOSTNAME: 0.0.0.0
+      NODE_ENV: development
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   pgdata:
+  app_node_modules:
+  app_next_cache:
