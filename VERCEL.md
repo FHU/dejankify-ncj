@@ -6,7 +6,7 @@ Deploying the **Dejaknify** app to Vercel involved the following steps:
 
 - Making sure the app works locally
 - Creating a GitHub repository for the app
-- Creating an account on :contentReference[oaicite:1]{index=1}
+- Creating an account on : Vercel
 - Creating a new project in Vercel
 - Importing the GitHub repository
 - Adding the environment variables
